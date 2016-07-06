@@ -1,12 +1,12 @@
 build:
-	docker build -t pgarrett/ssl .
+	docker build -t pgarrett/openssl .
 
 push: build
-	docker push pgarrett/ssl
+	docker push pgarrett/openssl
 
 clean:
 	docker rm -f ssl; true
 
 run: build clean
 	docker run --name ssl -d \
-		-v /vagrant/certs:/etc/ssl/certs/example pgarrett/ssl
+		-v /vagrant/certs:/etc/ssl/certs/example pgarrett/openssl
