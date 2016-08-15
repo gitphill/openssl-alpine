@@ -1,19 +1,16 @@
 #!/bin/sh
 
-# generate certificates
-if [ ! -e "$CERTDIR/$CERTKEY" ] || [ ! -e "$CERTDIR/$CERTCRT" ]; then
+# generate certificate
+openssl req \
+  -new \
+  -newkey rsa:2048 \
+  -sha256 \
+  -days "$CERT_DAYS" \
+  -nodes \
+  -x509 \
+  -subj "$CERT_SUBJ" \
+  -keyout "$CERT_KEY" \
+  -out "$CERT_CRT"
 
-  openssl req \
-    -new \
-    -newkey rsa:2048 \
-    -days "$CERTDAYS" \
-    -nodes \
-    -x509 \
-    -subj "$CERTSUBJ" \
-    -keyout "$CERTKEY" \
-    -out "$CERTCRT"
-
-fi
-
-# execute optional command
+# run another command
 exec "$@"
