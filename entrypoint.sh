@@ -71,9 +71,11 @@ openssl x509 \
   -days "$DAYS"
 
 # move certificates to volume
-mv *.crt "$CERT_DIR"
+cp *.crt "$CERT_DIR"
 # move public rsa key to volume
-mv "$PUBLIC_NAME.key" "$CERT_DIR"
+cp "$PUBLIC_NAME.key" "$CERT_DIR"
+# make combined root and issuer ca.pem
+cat "$ISSUER_NAME.crt" "$ROOT_NAME.crt" > "$CERT_DIR/ca.pem"
 
 # run command passed to docker run
 exec "$@"
