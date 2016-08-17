@@ -6,6 +6,7 @@ SUBJ="/C=$COUNTY/ST=$STATE/L=$LOCATION/O=$ORGANISATION"
 
 # generate root certificate
 ROOT_SUBJ="$SUBJ/CN=$ROOT_CN"
+
 openssl genrsa \
   -out "$ROOT_NAME.key" \
   "$RSA_KEY_NUMBITS"
@@ -43,6 +44,7 @@ openssl x509 \
   -CAkey "$ROOT_NAME.key" \
   -out "$ISSUER_NAME.crt" \
   -CAcreateserial \
+  -extfile issuer.ext \
   -days "$DAYS"
 
 # generate public certificate
@@ -65,7 +67,13 @@ openssl x509 \
   -CAkey "$ISSUER_NAME.key" \
   -out "$PUBLIC_NAME.crt" \
   -CAcreateserial \
+  -extfile public.ext \
   -days "$DAYS"
+
+# move certificates to volume
+mv *.crt "$CERT_DIR"
+# move public rsa key to volume
+mv "$PUBLIC_NAME.key" "$CERT_DIR"
 
 # run command passed to docker run
 exec "$@"

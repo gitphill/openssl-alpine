@@ -18,9 +18,10 @@ ENV DAYS "365"
 RUN apk add --update openssl && \
     rm -rf /var/cache/apk/*
 
-# certificate directory
-VOLUME ["/etc/ssl/certs"]
-WORKDIR "/etc/ssl/certs"
+# certificate directories
+ENV CERT_DIR "/etc/ssl/certs"
+VOLUME ["$CERT_DIR"]
 
-COPY ./entrypoint.sh /
+COPY *.ext /
+COPY entrypoint.sh /
 ENTRYPOINT ["/entrypoint.sh"]
