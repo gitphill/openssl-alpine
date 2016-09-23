@@ -22,7 +22,8 @@ openssl req \
   -key "$ROOT_NAME.key" \
   -in "$ROOT_NAME.csr" \
   -out "$ROOT_NAME.crt" \
-  -days "$DAYS"
+  -days "$DAYS" \
+  -subj "$ROOT_SUBJ"
 
 # generate issuer certificate
 ISSUER_SUBJ="$SUBJ/CN=$ISSUER_CN"
@@ -79,3 +80,4 @@ cat "$ISSUER_NAME.crt" "$ROOT_NAME.crt" > "$CERT_DIR/ca.pem"
 
 # run command passed to docker run
 exec "$@"
+
