@@ -1,4 +1,4 @@
-# OpenSSL
+# OpenSSL Alpine
 
 Docker image based on Alpine Linux that uses OpenSSL to generate a three tier x509 certificate chain.
 
@@ -28,7 +28,7 @@ make build
 
 ### Run container
 
-Performs a build then runs container, exporting certificates to certs directory:
+To perform a build then run a container, exporting certificates to certs directory:
 
 ```
 make run
@@ -74,7 +74,7 @@ docker run \
   -e ISSUER_NAME="tolkien" \
   -e PUBLIC_NAME="hobbit" \
   -v hobbit:/etc/ssl/certs \
-  pgarrett/openssl
+  pgarrett/openssl-alpine
 ```
 
 List the generated certificates:
