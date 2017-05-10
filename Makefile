@@ -7,7 +7,8 @@ push:
 	docker push pgarrett/openssl-alpine
 
 clean:
-	rm -rf ${certs_dir}; docker rm -f crt; true
+	rm -rf ${certs_dir}
+	docker ps -aq | xargs --no-run-if-empty docker rm -f
 
 run: build clean
 	docker run --name crt -v ${certs_dir}:/etc/ssl/certs pgarrett/openssl-alpine

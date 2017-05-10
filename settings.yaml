@@ -1,0 +1,7 @@
+---
+box: puppetlabs/centos-7.2-64-nocm
+hostname: openssl.example.com
+plugins:
+  - vagrant-vbguest
+modules:
+  - garethr-docker

@@ -87,6 +87,9 @@ then
     -out "$PUBLIC_NAME.csr" \
     -subj "$PUBLIC_SUBJ"
 
+  # append public cn to subject alt names
+  echo "DNS.1 = $PUBLIC_CN" >> public.ext
+
   openssl x509 \
     -req \
     -in "$PUBLIC_NAME.csr" \

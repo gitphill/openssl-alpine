@@ -1,28 +1,48 @@
-# -*- mode: ruby -*-
-# vi: set ft=ruby :
-unless Vagrant.has_plugin?("vagrant-vbguest")
-  raise "Missing vbguest plugin!
-Run the following command:
-  vagrant plugin install vagrant-vbguest"
+# vagrant development environment
+
+# read settings file
+require "yaml"
+settings = YAML.load_file("settings.yaml")
+
+# check for requried plugins
+settings["plugins"].each do |plugin|
+  unless Vagrant.has_plugin?(plugin)
+    raise "Missing plugin! Run: vagrant plugin install " + plugin
+  end
 end
-SCRIPT_PATH="https://raw.githubusercontent.com/gitphill/shell/master/"
+
 Vagrant.configure(2) do |config|
-  config.vm.box = "ubuntu/trusty64"
-  config.vm.hostname = "openssl.dev"
-  config.vm.provider "virtualbox" do |vb|
+
+  # virtual box settings
+  config.vm.box = settings["box"]
+  config.vm.hostname = settings["hostname"]
+  config.vm.provider :virtualbox do |vb|
     vb.name = "OpenSSL Development"
     vb.memory = 1024
     vb.cpus = 2
   end
-  config.vm.provision :shell do |sh|
-    sh.inline = "apt-get install -y openssl"
+
+  # ensure vagrant user starts in sync directory
+  config.vm.provision :shell, inline: <<-SHELL
+    if ! grep -q 'cd /vagrant' /home/vagrant/.bashrc; then
+      echo 'cd /vagrant' >> /home/vagrant/.bashrc
+    fi
+  SHELL
+
+  # install puppet agent
+  config.vm.provision :shell, inline: <<-SHELL
+    if ! type -p puppet >/dev/null 2>&1; then
+      rpm -Uvh https://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm
+      yum install -y puppet-agent
+    fi
+  SHELL
+
+  # install puppet modules
+  settings["modules"].each do |mod|
+    config.vm.provision :shell, inline: "puppet module install " + mod
   end
-  config.vm.provision :shell do |sh|
-    sh.path = SCRIPT_PATH + "start-in.sh"
-    sh.args = ["vagrant", "/vagrant"]
-  end
-  config.vm.provision :shell do |sh|
-    sh.path = SCRIPT_PATH + "docker.sh"
-    sh.args = "vagrant"
-  end
+
+  # apply puppet configuration
+  config.vm.provision :shell, inline: "puppet apply /vagrant/default.pp"
+
 end

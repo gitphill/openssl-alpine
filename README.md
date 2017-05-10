@@ -1,50 +1,16 @@
 # OpenSSL Alpine
 
-Docker image based on Alpine Linux that uses OpenSSL to generate a three tier x509 certificate chain.
+Docker image based on Alpine Linux that uses OpenSSL to generate a three tier
+x509 certificate chain.
 
-x509 is a standard for a public key infrastructure (PKI) to manage digital certificates, public-key encryption and a key part of the Transport Layer Security (TLS) protocol used to secure web and email communication.
-
-## Vagrant
-
-Requires [VirtualBox](https://www.virtualbox.org) and [Vagrant](https://www.vagrantup.com) to be installed. The development environment is based on Ubuntu Trusty and installs docker.
-
-To start a development machine and login:
-
-```
-vagrant up && vagrant ssh
-```
-
-## Docker
-
-Docker images and containers can be built and run using the Makefiles.
-
-### Build image
-
-To build a local image based on the Dockerfile:
-
-```
-make build
-```
-
-### Run container
-
-To perform a build then run a container, exporting certificates to certs directory:
-
-```
-make run
-```
-
-## Verify certificate
-
-Run docker container then view the generated public certificate:
-
-```
-make verify
-```
+x509 is a standard for a public key infrastructure (PKI) to manage digital
+certificates, public-key encryption and a key part of the Transport Layer
+Security (TLS) protocol used to secure web and email communication.
 
 ## Customisation
 
-Override the following environment variables when running the docker container to customise the generated certificate:
+The image comes with default values, but they can be overridden using the following environment variables when running a docker container to customise
+the generated certificates:
 
 | VARIABLE | DESCRIPTION | DEFAULT |
 | :------- | :---------- | :------ |
@@ -61,7 +27,8 @@ Override the following environment variables when running the docker container t
 | RSA_KEY_NUMBITS | The size of the rsa keys to generate in bits | 2048 |
 | DAYS | The number of days to certify the certificates for | 365 |
 
-For example:
+For example, to run a container, customise variables and mount the certificates
+in a volume:
 
 ```
 docker run \
