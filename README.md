@@ -31,7 +31,7 @@ For example, to run a container, customise variables and mount the certificates
 in a volume:
 
 ```
-docker run \
+docker run --rm \
   -e COUNTY="ME" \
   -e STATE="Middle Earth" \
   -e LOCATION="The Shire" \
