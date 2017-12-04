@@ -9,26 +9,25 @@ then
   # generate root certificate
   ROOT_SUBJ="$SUBJ/CN=$ROOT_CN"
 
+  echo " ---> Generate Root CA private key"
   openssl genrsa \
-    -out "$ROOT_NAME.key" \
+    -out "$CERT_DIR/$ROOT_NAME.key" \
     "$RSA_KEY_NUMBITS"
 
+  echo " --->Generate Root CA certificate request"
   openssl req \
     -new \
-    -key "$ROOT_NAME.key" \
-    -out "$ROOT_NAME.csr" \
+    -key "$CERT_DIR/$ROOT_NAME.key" \
+    -out "$CERT_DIR/$ROOT_NAME.csr" \
     -subj "$ROOT_SUBJ"
 
+  echo " ---> Generate self-signed Root CA certificate"
   openssl req \
     -x509 \
-    -key "$ROOT_NAME.key" \
-    -in "$ROOT_NAME.csr" \
-    -out "$ROOT_NAME.crt" \
-    -days "$DAYS" \
-    -subj "$ROOT_SUBJ"
-
-  # copy certificate to volume
-  cp "$ROOT_NAME.crt" "$CERT_DIR"
+    -key "$CERT_DIR/$ROOT_NAME.key" \
+    -in "$CERT_DIR/$ROOT_NAME.csr" \
+    -out "$CERT_DIR/$ROOT_NAME.crt" \
+    -days "$DAYS"
 else
   echo "ENTRYPOINT: $ROOT_NAME.crt already exists"
 fi
@@ -38,28 +37,28 @@ then
   # generate issuer certificate
   ISSUER_SUBJ="$SUBJ/CN=$ISSUER_CN"
 
+  echo " ---> Generate Issuer private key"
   openssl genrsa \
-    -out "$ISSUER_NAME.key" \
+    -out "$CERT_DIR/$ISSUER_NAME.key" \
     "$RSA_KEY_NUMBITS"
 
+  echo " ---> Generate Issuer certificate request"
   openssl req \
     -new \
-    -key "$ISSUER_NAME.key" \
-    -out "$ISSUER_NAME.csr" \
+    -key "$CERT_DIR/$ISSUER_NAME.key" \
+    -out "$CERT_DIR/$ISSUER_NAME.csr" \
     -subj "$ISSUER_SUBJ"
 
+  echo " ---> Generate Issuer certificate"
   openssl x509 \
     -req \
-    -in "$ISSUER_NAME.csr" \
-    -CA "$ROOT_NAME.crt" \
-    -CAkey "$ROOT_NAME.key" \
-    -out "$ISSUER_NAME.crt" \
+    -in "$CERT_DIR/$ISSUER_NAME.csr" \
+    -CA "$CERT_DIR/$ROOT_NAME.crt" \
+    -CAkey "$CERT_DIR/$ROOT_NAME.key" \
+    -out "$CERT_DIR/$ISSUER_NAME.crt" \
     -CAcreateserial \
     -extfile issuer.ext \
     -days "$DAYS"
-
-  # copy certificate to volume
-  cp "$ISSUER_NAME.crt" "$CERT_DIR"
 else
   echo "ENTRYPOINT: $ISSUER_NAME.crt already exists"
 fi
@@ -67,12 +66,10 @@ fi
 if [ ! -f "$CERT_DIR/$PUBLIC_NAME.key" ]
 then
   # generate public rsa key
+  echo " ---> Generate private key"
   openssl genrsa \
-    -out "$PUBLIC_NAME.key" \
+    -out "$CERT_DIR/$PUBLIC_NAME.key" \
     "$RSA_KEY_NUMBITS"
-
-  # copy public rsa key to volume
-  cp "$PUBLIC_NAME.key" "$CERT_DIR"
 else
   echo "ENTRYPOINT: $PUBLIC_NAME.key already exists"
 fi
@@ -80,28 +77,27 @@ fi
 if [ ! -f "$CERT_DIR/$PUBLIC_NAME.crt" ]
 then
   # generate public certificate
+  echo " ---> Generate public certificate request"
   PUBLIC_SUBJ="$SUBJ/CN=$PUBLIC_CN"
   openssl req \
     -new \
-    -key "$PUBLIC_NAME.key" \
-    -out "$PUBLIC_NAME.csr" \
+    -key "$CERT_DIR/$PUBLIC_NAME.key" \
+    -out "$CERT_DIR/$PUBLIC_NAME.csr" \
     -subj "$PUBLIC_SUBJ"
 
   # append public cn to subject alt names
   echo "DNS.1 = $PUBLIC_CN" >> public.ext
 
+  echo " ---> Generate public certificate signed by $ISSUER_CN"
   openssl x509 \
     -req \
-    -in "$PUBLIC_NAME.csr" \
-    -CA "$ISSUER_NAME.crt" \
-    -CAkey "$ISSUER_NAME.key" \
-    -out "$PUBLIC_NAME.crt" \
+    -in "$CERT_DIR/$PUBLIC_NAME.csr" \
+    -CA "$CERT_DIR/$ISSUER_NAME.crt" \
+    -CAkey "$CERT_DIR/$ISSUER_NAME.key" \
+    -out "$CERT_DIR/$PUBLIC_NAME.crt" \
     -CAcreateserial \
     -extfile public.ext \
     -days "$DAYS"
-
-  # copy certificate to volume
-  cp "$PUBLIC_NAME.crt" "$CERT_DIR"
 else
   echo "ENTRYPOINT: $PUBLIC_NAME.crt already exists"
 fi
@@ -109,6 +105,7 @@ fi
 if [ ! -f "$CERT_DIR/ca.pem" ]
 then
   # make combined root and issuer ca.pem
+  echo " ---> Generate a combined root and issuer ca.pem"
   cat "$CERT_DIR/$ISSUER_NAME.crt" "$CERT_DIR/$ROOT_NAME.crt" > "$CERT_DIR/ca.pem"
 else
   echo "ENTRYPOINT: ca.pem already exists"
