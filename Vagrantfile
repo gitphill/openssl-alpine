@@ -22,6 +22,8 @@ Vagrant.configure(2) do |config|
     vb.cpus = 2
   end
 
+  config.vm.synced_folder ".", "/vagrant", type: "virtualbox"
+
   # ensure vagrant user starts in sync directory
   config.vm.provision :shell, inline: <<-SHELL
     if ! grep -q 'cd /vagrant' /home/vagrant/.bashrc; then

@@ -11,7 +11,7 @@ clean:
 	docker ps -aq | xargs --no-run-if-empty docker rm -f
 
 run: build clean
-	docker run --name crt -v ${certs_dir}:/etc/ssl/certs pgarrett/openssl-alpine
+	docker run --rm --name crt -v ${certs_dir}:/etc/ssl/certs pgarrett/openssl-alpine
 
 verify: run
 	openssl x509 -in ${certs_dir}/public.crt -text -noout

@@ -13,6 +13,8 @@ ENV ISSUER_NAME "example"
 ENV PUBLIC_NAME "public"
 ENV RSA_KEY_NUMBITS "2048"
 ENV DAYS "365"
+ENV KEYSTORE_NAME "keystore"
+ENV KEYSTORE_PASS "changeit"
 
 # install openssl
 RUN apk add --update openssl && \

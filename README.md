@@ -26,6 +26,8 @@ the generated certificates:
 | PUBLIC_NAME | Public certificate filename | public |
 | RSA_KEY_NUMBITS | The size of the rsa keys to generate in bits | 2048 |
 | DAYS | The number of days to certify the certificates for | 365 |
+| KEYSTORE_NAME | Keystore filename | keystore |
+| KEYSTORE_PASS | Keystore password | changeit |
 
 For example, to run a container, customise variables and mount the certificates
 in a volume:

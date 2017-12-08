@@ -14,7 +14,7 @@ then
     -out "$CERT_DIR/$ROOT_NAME.key" \
     "$RSA_KEY_NUMBITS"
 
-  echo " --->Generate Root CA certificate request"
+  echo " ---> Generate Root CA certificate request"
   openssl req \
     -new \
     -key "$CERT_DIR/$ROOT_NAME.key" \
@@ -109,6 +109,21 @@ then
   cat "$CERT_DIR/$ISSUER_NAME.crt" "$CERT_DIR/$ROOT_NAME.crt" > "$CERT_DIR/ca.pem"
 else
   echo "ENTRYPOINT: ca.pem already exists"
+fi
+
+if [ ! -f "$CERT_DIR/$KEYSTORE_NAME.pfx" ]
+then
+  # make PKCS12 keystore
+  echo " ---> Generate $KEYSTORE_NAME.pfx"
+  openssl pkcs12 \
+    -export \
+    -in "$CERT_DIR/$PUBLIC_NAME.crt" \
+    -inkey "$CERT_DIR/$PUBLIC_NAME.key" \
+    -certfile "$CERT_DIR/ca.pem" \
+    -password "pass:$KEYSTORE_PASS" \
+    -out "$CERT_DIR/$KEYSTORE_NAME.pfx"
+else
+  echo "ENTRYPOINT: $KEYSTORE_NAME.pfx already exists"
 fi
 
 # run command passed to docker run
