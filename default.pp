@@ -1,7 +1,7 @@
 # installs software required for development
 node default {
-  # install openssl
-  package {'openssl':
+  # install packages
+  package { ['openssl', 'make']:
     ensure => 'installed',
   }
   # install docker

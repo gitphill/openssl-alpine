@@ -1,20 +1,19 @@
-certs_dir := $(CURDIR)/certs
+IMAGE=pgarrett/openssl-alpine
+CERTS=$(CURDIR)/certs
+
+.PHONY: build clean run test help
 
 build:
-	docker build -t pgarrett/openssl-alpine .
-
-push:
-	docker push pgarrett/openssl-alpine
+	docker build -t $(IMAGE) .
 
 clean:
-	rm -rf ${certs_dir}
-	docker ps -aq | xargs --no-run-if-empty docker rm -f
+	rm -rf $(CERTS)
 
 run: build clean
-	docker run --rm --name crt -v ${certs_dir}:/etc/ssl/certs pgarrett/openssl-alpine
+	docker run --rm --name crt -v $(CERTS):/etc/ssl/certs $(IMAGE)
 
-verify: run
-	openssl x509 -in ${certs_dir}/public.crt -text -noout
+test: run
+	openssl verify -CAfile certs/ca.pem certs/root.crt certs/example.crt certs/public.crt
 
 help:
-	@echo "Usage: make build|push|clean|run|verify"
+	@echo "Usage: make build|clean|run|test"

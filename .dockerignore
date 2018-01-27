@@ -1,5 +1,5 @@
 # ignore all files
 *
 # except those used during a docker build
-!entrypoint.sh
+!docker-entrypoint.sh
 !*.ext
