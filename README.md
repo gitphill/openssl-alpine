@@ -14,7 +14,7 @@ the generated certificates:
 
 | VARIABLE | DESCRIPTION | DEFAULT |
 | :------- | :---------- | :------ |
-| COUNTY | Certificate subject country string | UK |
+| COUNTRY | Certificate subject country string | UK |
 | STATE | Certificate subject state string | Greater London |
 | LOCATION | Certificate subject location string | London |
 | ORGANISATION | Certificate subject organisation string | Example |
@@ -34,7 +34,7 @@ in a volume:
 
 ```
 docker run --rm \
-  -e COUNTY="ME" \
+  -e COUNTRY="ME" \
   -e STATE="Middle Earth" \
   -e LOCATION="The Shire" \
   -e ORGANISATION="Hobbit" \

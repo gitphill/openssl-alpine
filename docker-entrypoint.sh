@@ -2,7 +2,7 @@
 # docker entrypoint script
 # generate three tier certificate chain
 
-SUBJ="/C=$COUNTY/ST=$STATE/L=$LOCATION/O=$ORGANISATION"
+SUBJ="/C=$COUNTRY/ST=$STATE/L=$LOCATION/O=$ORGANISATION"
 
 if [ ! -f "$CERT_DIR/$ROOT_NAME.crt" ]
 then
