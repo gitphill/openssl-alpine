@@ -34,7 +34,7 @@ in a volume:
 
 ```
 docker run --rm \
-  -e COUNTY="ME" \
+  -e COUNTRY="ME" \
   -e STATE="Middle Earth" \
   -e LOCATION="The Shire" \
   -e ORGANISATION="Hobbit" \
