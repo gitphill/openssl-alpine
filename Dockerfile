@@ -1,7 +1,7 @@
 FROM alpine
 
 # default variables
-ENV COUNTY "UK"
+ENV COUNTRY "UK"
 ENV STATE "Greater London"
 ENV LOCATION "London"
 ENV ORGANISATION "Example"
